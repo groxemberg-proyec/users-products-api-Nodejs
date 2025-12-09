@@ -68,7 +68,7 @@ export const verifyUserCredentials = async (email, password) => {
         const isPasswordValid = await bcrypt.compare(password, data.password);
 
         if (!isPasswordValid) {
-            return "error de autenticación";
+            return "Contraseña incorrecta";
         }
         const { password: _, ...rest } = data;
         return rest;

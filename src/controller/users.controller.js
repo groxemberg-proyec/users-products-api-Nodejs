@@ -1,5 +1,7 @@
 import { findUsers,findUserById,findCreateUser,verifyUserCredentials,findUpdateUserById,findDeleteUserById } from "../services/user.service.js";
 
+import jwt from "jsonwebtoken";
+
 export const getUsers = async (req, res) => {
     try{
         const usuarios = await findUsers();
@@ -38,7 +40,23 @@ export const postVerifyUser = async (req, res) => {
     try{
         const {email, password} = req.body;
         const usuario = await verifyUserCredentials(email, password);
-        res.status(200).json(usuario);
+
+        if (usuario === "error de autenticación") {
+            return res.status(401).json({ message: "credenciales incorrectas" });
+        }
+
+        const token=jwt.sign(
+            {
+                id: usuario.id,
+                email: usuario.email,
+                rol: usuario.rol
+            },
+            process.env.JWT_SECRET,
+            {expiresIn: "1h"}
+        );
+
+        usuario.token = token;
+        res.status(200).json({message: "usuario verificado exitosamente", usuario});
     }
     catch(error){
         res.status(500).json({message: "error al verificar el usuario", error: error.message});
