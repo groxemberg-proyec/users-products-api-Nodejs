@@ -33,14 +33,8 @@ export const findCreateProduct= async(productData)=>{
         descripcion: productData.descripcion || "",
         categoria: productData.categoria || ""
     });
-    return {
-        id: docRef.id,
-        nombre: productData.nombre,
-        precio: Number(productData.precio),
-        stock: Number(productData.stock || 0),
-        descripcion: productData.descripcion || "",
-        categoria: productData.categoria || ""
-    };
+    const verNew = await getDoc(docRef);
+    return {id: verNew.id, ...verNew.data()};
 }
 
 export const findDeleteProductById= async(id)=>{
@@ -61,4 +55,6 @@ export const findUpdateProductById= async(id,updateData)=>{
     }
     await updateDoc(docRef, updateData);
     return {message: "producto actualizado exitosamente"};
+
+
 };
